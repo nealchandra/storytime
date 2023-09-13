@@ -1,12 +1,13 @@
 {
+  "editor.formatOnSave": true,
+  "[python]": {
+    "editor.defaultFormatter": "ms-python.black-formatter",
     "editor.formatOnSave": true,
-    "[python]": {
-      "editor.defaultFormatter": "ms-python.black-formatter",
-      "editor.formatOnSave": true,
-      "editor.codeActionsOnSave": {
-        "source.organizeImports": true
-      }
-    },
-    "isort.args": ["--profile", "black"]
-  }
-  
+    "editor.codeActionsOnSave": {
+      "source.organizeImports": true
+    }
+  },
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "prettier.prettierPath": "./js/app/node_modules/prettier/index.js",
+  "isort.args": ["--profile", "black"]
+}
