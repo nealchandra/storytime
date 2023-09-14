@@ -55,24 +55,6 @@ const titlePrompt = () => `
 Finally, generate a title for the story.
 `;
 
-const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-  console.log(
-    `Request: ${req.url}, ${req.method}, ${util.inspect(
-      req.body
-    )}, ${util.inspect(req.query)}`
-  );
-
-  const hdl = lo.get(
-    handlers,
-    req.method as lo.PropertyPath,
-    (_req: NextApiRequest, res: NextApiResponse) => {
-      res.status(405).json({ statusCode: 405, message: 'Method Not Allowed' });
-    }
-  );
-
-  return hdl(req, res);
-};
-
 const handlePost = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
     const { characters, subjects } = req.body;
@@ -109,7 +91,7 @@ const handlers = {
   GET: handleGet,
 };
 
-export default handler;
+export const { GET, POST } = handlers;
 
 export class StorytimeService {
   getStoryKey(storyId: string): string {
