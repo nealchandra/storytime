@@ -1,7 +1,7 @@
 import { EventSchemas, Inngest } from 'inngest';
 import { serve } from 'inngest/next';
 
-import { StorytimeService } from '@/app/api/stories';
+import { StorytimeService } from '@/app/api/stories/route';
 
 type CreateStory = {
   data: {
