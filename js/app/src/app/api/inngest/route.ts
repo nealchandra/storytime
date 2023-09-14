@@ -14,7 +14,7 @@ type Events = {
   'stories.create': CreateStory;
 };
 
-export const inngest = new Inngest({
+const inngest = new Inngest({
   name: 'Storytime',
   schemas: new EventSchemas().fromRecord<Events>(),
 });

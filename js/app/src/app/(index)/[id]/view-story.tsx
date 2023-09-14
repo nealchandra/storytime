@@ -1,8 +1,9 @@
+'use client';
+
 import { Typography } from '@mui/material';
 import Alert from '@mui/material/Alert';
 import LinearProgress from '@mui/material/LinearProgress';
 import va from '@vercel/analytics';
-import { useRouter } from 'next/navigation';
 import useSWR from 'swr';
 
 import { CreateStoryPreview } from '@/components/create-story-preview';

@@ -83,7 +83,7 @@ export const CreateStoryPage = () => {
   useEffect(() => {
     const objectState = decodeState(searchParams.get('state'));
     setState(objectState);
-  }, [searchParams]);
+  }, [searchParams, router]);
 
   const handleStateUpdate = (state: StorytimeStates) => {
     const encodedState = encodeState(state);
@@ -109,6 +109,7 @@ const StorytimeView = ({ state, onStateUpdate }: StorytimeProps) => {
     default:
       console.error('Invalid state ' + state);
       console.dir(state);
+      return null;
   }
 };
 
@@ -132,7 +133,7 @@ const CreateStoryView = ({ state }: CreateStoryProps) => {
     if (!!data?.storyId) {
       router.push(`/stories/${data.storyId}`);
     }
-  }, [data]);
+  }, [data, router]);
 
   if (error) {
     return (
@@ -225,6 +226,7 @@ const PrepareStoryView = ({ state, onStateUpdate }: PrepareStoryProps) => {
     default:
       console.error('Invalid state ' + state);
       console.dir(state);
+      return null;
   }
 };
 
