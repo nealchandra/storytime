@@ -5,7 +5,7 @@ import va from '@vercel/analytics';
 import { useRouter } from 'next/navigation';
 import useSWR from 'swr';
 
-import { CreateStoryPreview } from '@/components/create_story/CreateStoryPreview';
+import { CreateStoryPreview } from '@/components/create-story-preview';
 import { fetcherGet } from '@/lib/fetcher';
 
 type RenderStoryProps = {
