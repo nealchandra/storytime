@@ -2,6 +2,7 @@ import { kv } from '@vercel/kv';
 import { Inngest } from 'inngest';
 import * as lo from 'lodash';
 import { NextApiRequest, NextApiResponse } from 'next';
+import { NextRequest, NextResponse } from 'next/server';
 import * as util from 'util';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -55,19 +56,19 @@ const titlePrompt = () => `
 Finally, generate a title for the story.
 `;
 
-const handlePost = async (req: NextApiRequest, res: NextApiResponse) => {
+const handlePost = async (req: NextRequest) => {
   try {
-    const { characters, subjects } = req.body;
+    const { characters, subjects } = req.body as any;
     const storytime = new StorytimeService();
     const createResponse = await storytime.startCreateStory({
       characters,
       subjects,
     });
 
-    res.status(200).json(createResponse);
+    NextResponse.json(createResponse, { status: 200 });
   } catch (err: any) {
     console.log(`Caught error: ${util.inspect(err)}`);
-    res.status(500).json({ statusCode: 500, message: err.message });
+    NextResponse.json({ statusCode: 500, message: err.message });
   }
 };
 
@@ -79,10 +80,10 @@ const handleGet = async (req: NextApiRequest, res: NextApiResponse) => {
       storyId: storyId as string,
     });
 
-    res.status(200).json(getResponse);
+    NextResponse.json(getResponse, { status: 200 });
   } catch (err: any) {
     console.log(`Caught error: ${util.inspect(err)}`);
-    res.status(500).json({ statusCode: 500, message: err.message });
+    NextResponse.json({ statusCode: 500, message: err.message });
   }
 };
 
