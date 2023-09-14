@@ -8,6 +8,6 @@
     }
   },
   "editor.defaultFormatter": "esbenp.prettier-vscode",
-  "prettier.prettierPath": "./js/app/node_modules/prettier/index.js",
+  "prettier.prettierPath": "./node_modules/prettier/index.js",
   "isort.args": ["--profile", "black"]
 }
