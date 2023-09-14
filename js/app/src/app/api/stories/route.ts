@@ -58,7 +58,7 @@ Finally, generate a title for the story.
 
 const handlePost = async (req: NextRequest) => {
   try {
-    const { characters, subjects } = req.body as any;
+    const { characters, subjects } = await req.json();
     const storytime = new StorytimeService();
     const createResponse = await storytime.startCreateStory({
       characters,

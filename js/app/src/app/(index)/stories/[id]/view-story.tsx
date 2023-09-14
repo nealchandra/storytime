@@ -19,6 +19,8 @@ export const RenderStoryView = ({ storyId }: RenderStoryProps) => {
     { refreshInterval: 1000 }
   );
 
+  console.log(data);
+
   if (isLoading) {
     return (
       <div>
