@@ -72,9 +72,9 @@ const handlePost = async (req: NextRequest) => {
   }
 };
 
-const handleGet = async (req: NextApiRequest, res: NextApiResponse) => {
+const handleGet = async (req: NextRequest) => {
   try {
-    const { storyId } = req.query;
+    const storyId = req.nextUrl.searchParams.get('storyId');
     const storytime = new StorytimeService();
     const getResponse = await storytime.getStory({
       storyId: storyId as string,
