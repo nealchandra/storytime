@@ -65,10 +65,10 @@ const handlePost = async (req: NextRequest) => {
       subjects,
     });
 
-    NextResponse.json(createResponse, { status: 200 });
+    return NextResponse.json(createResponse, { status: 200 });
   } catch (err: any) {
     console.log(`Caught error: ${util.inspect(err)}`);
-    NextResponse.json({ statusCode: 500, message: err.message });
+    return NextResponse.json({ statusCode: 500, message: err.message });
   }
 };
 
@@ -80,10 +80,10 @@ const handleGet = async (req: NextApiRequest, res: NextApiResponse) => {
       storyId: storyId as string,
     });
 
-    NextResponse.json(getResponse, { status: 200 });
+    return NextResponse.json(getResponse, { status: 200 });
   } catch (err: any) {
     console.log(`Caught error: ${util.inspect(err)}`);
-    NextResponse.json({ statusCode: 500, message: err.message });
+    return NextResponse.json({ statusCode: 500, message: err.message });
   }
 };
 
