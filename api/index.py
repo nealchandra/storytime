@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 from fastapi import FastAPI
 from pydantic import BaseModel
 
-from .utils.prompts import (
+from ._utils.prompts import (
     CHARACTER_BIOS,
     CHARACTER_DESCRIPTORS,
     GENERATE_IMAGE_PROMPT,
@@ -13,7 +13,7 @@ from .utils.prompts import (
     STORY,
     TITLE,
 )
-from .utils.workflow import (
+from ._utils.workflow import (
     GuidanceLLMListStep,
     GuidanceLLMStep,
     ReplicateImageGeneratorStep,
