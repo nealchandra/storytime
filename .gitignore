@@ -2,7 +2,9 @@ node_modules
 .vercel
 .next
 .DS_Store
+.env
 .env.development.local
 
+.venv
 *.pyc
 *.pyo
