@@ -1,77 +1,29 @@
-import pprint
-from typing import List
+from typing import Dict, List
 
+import guidance
 from dotenv import load_dotenv
 from fastapi import FastAPI
 from pydantic import BaseModel
 
-from ._utils.prompts import (
-    CHARACTER_BIOS,
-    CHARACTER_DESCRIPTORS,
-    GENERATE_IMAGE_PROMPT,
-    OUTLINE,
-    STORY,
-    TITLE,
-)
-from ._utils.workflow import (
-    GuidanceLLMListStep,
-    GuidanceLLMStep,
-    ReplicateImageGeneratorStep,
-    SplitCharactersStep,
-    SplitStoryStep,
-    Workflow,
-    WorkflowState,
-)
-
 load_dotenv()
+
+guidance.llm = guidance.llms.OpenAI("gpt-3.5-turbo")
 
 app = FastAPI()
 
 
-class Character(BaseModel):
-    name: str
-    description: str
+class GuidanceRequest(BaseModel):
+    inputs: Dict[str, any]
+    prompt_template: str
+    outputs: List[str]
+
+    class Config:
+        arbitrary_types_allowed = True
 
 
-class StoryRequest(BaseModel):
-    subject: str
-    characters: List[Character]
+@app.post("/api/py/guidance")
+async def guidance_call(request: GuidanceRequest):
+    fn = guidance(request.prompt_template)
+    output = fn(**request.inputs)
 
-
-@app.post("/api/py/create-story")
-async def create_story(story_request: StoryRequest):
-    INITIAL_STATE = WorkflowState(
-        state={"characters": story_request.characters, "subject": story_request.subject}
-    )
-
-    steps = [
-        GuidanceLLMStep("outline", OUTLINE),
-        GuidanceLLMStep("story", OUTLINE + STORY),
-        GuidanceLLMStep("title", OUTLINE + STORY + TITLE),
-        GuidanceLLMStep("full_characters", CHARACTER_BIOS),
-        SplitCharactersStep(),
-        GuidanceLLMStep("descriptors", CHARACTER_DESCRIPTORS),
-        SplitStoryStep(),
-        GuidanceLLMListStep(
-            "paragraphs", "paragraph", "image_prompts", GENERATE_IMAGE_PROMPT
-        ),
-        ReplicateImageGeneratorStep(
-            "image_prompts", "images", " in the style of a children's book illustration"
-        ),
-    ]
-
-    workflow = Workflow(steps, initial_state=INITIAL_STATE)
-    state = workflow.run()
-
-    pprint.pprint(state)
-
-    return {
-        "title": state["title"],
-        "paragraphs": [
-            {
-                "content": content,
-                "image": image,
-            }
-            for content, image in list(zip(state["paragraphs"], state["images"]))
-        ],
-    }
+    return {k: output[k] for k in request.outputs}

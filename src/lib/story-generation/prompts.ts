@@ -1,4 +1,4 @@
-OUTLINE = '''{{#system~}}
+export const GENERATE_STORY = `{{#system~}}
 You are the beloved author of childrens story books. You are going to write a children's story based on some guidance I provide to you.
 {{~/system}}
 {{#user~}}
@@ -18,9 +18,6 @@ SUBJECT DESCRIPTION: {{subject}}
 {{#assistant~}}
 {{gen 'outline'}}
 {{~/assistant}}
-'''
-
-STORY = '''
 {{#user~}}
 Now, using the outline you provided above, fill in the details of the story.
 Turn each sentence into 2-4 sentences.
@@ -30,18 +27,15 @@ Remember to include characters, subjects, and events from above where you can.
 {{#assistant~}}
 {{gen 'story'}}
 {{~/assistant}}
-'''
-
-TITLE = '''
 {{#user~}}
 Finally, generate a title for the story.
 {{~/user}}
 {{#assistant~}}
 {{gen 'title'}}
 {{~/assistant}}
-'''
+`;
 
-CHARACTER_BIOS = '''{{#system~}}
+export const CHARACTER_BIOS = `{{#system~}}
 Your task is to read a story, and extract a list of characters from it. Some of these characters are known to us, so we will provide a short description of the character.
 
 If a character is known, you should simply include the provided description. If the character was not provided, you should make up a short description/backstory (1 - 3 sentences). You can be imaginative as long as you don't contradict information from the story. Only include named characters.
@@ -60,9 +54,9 @@ Story:
 {{#assistant~}}
 {{gen 'full_characters' }}
 {{~/assistant}}
-'''
+`;
 
-CHARACTER_DESCRIPTORS = '''{{#system~}}
+export const CHARACTER_DESCRIPTORS = `{{#system~}}
 Your task is to generate character descriptors for a given backstory. These characters descriptors will be fed into an image generation pipeline, and we want the character descriptors to be specific so there is consistency between different images.
 
 You should invent your own details, but the goal is to be very detailed with lots of specifics on the characters PHYSICAL features.
@@ -81,9 +75,9 @@ Return your response in the format: <CHARACTER_NAME>: <DESCRIPTIONS>, separating
 {{gen 'descriptors' list_append=True}}
 {{~/assistant}}
 {{~/each}}
-'''
+`;
 
-GENERATE_IMAGE_PROMPT = '''
+export const GENERATE_IMAGE_PROMPT = `
 {{#system~}}
 Your task is to generate a prompt for an image generation AI. 
 
@@ -108,4 +102,4 @@ Paragraph:
 {{#assistant~}}
 {{gen "image_prompts" max_tokens=200}}
 {{~/assistant}}
-'''
+`;
