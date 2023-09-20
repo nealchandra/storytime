@@ -7,7 +7,7 @@ export class Workflow<T extends Object> {
 
   async run() {
     while (this.steps.length > 0) {
-      let curr = this.steps.pop()!;
+      let curr = this.steps.shift()!;
       this.state = await curr(this.state);
     }
 

@@ -1,105 +1,98 @@
-export const GENERATE_STORY = `{{#system~}}
-You are the beloved author of childrens story books. You are going to write a children's story based on some guidance I provide to you.
-{{~/system}}
-{{#user~}}
+export const GENERATE_STORY = `You are the beloved author of childrens story books. You are going to write a children's story based on some guidance I provide to you.
+
 Please create an outline of a childrens' story consisting of around 10 plot points, each one concisely summarizing a page of the story.
 The story should have an imaginative, fantasy-oriented theme.
 Do not include a title.
 Do not include page numbers or page headers.
 
 Please include the following characters as main characters in the story:
+CHARACTERS:
 {{~#each characters}}
-CHARACTER DESCRIPTION: {{this.description}}
+{{this.name}}: {{this.description}}
 {{~/each}}
 
 Please include the following subjects or events in the story:
 SUBJECT DESCRIPTION: {{subject}}
-{{~/user}}
-{{#assistant~}}
+
+OUTLINE:
 {{gen 'outline'}}
-{{~/assistant}}
-{{#user~}}
+
 Now, using the outline you provided above, fill in the details of the story.
 Turn each sentence into 2-4 sentences.
 Remember to make the story whimsical and fun, something a young child would find exciting to read.
 Remember to include characters, subjects, and events from above where you can.
-{{~/user}}
-{{#assistant~}}
-{{gen 'story'}}
-{{~/assistant}}
-{{#user~}}
-Finally, generate a title for the story.
-{{~/user}}
-{{#assistant~}}
-{{gen 'title'}}
-{{~/assistant}}
+Try to make the story at least 5-10 paragraphs (longer is okay).
+
+STORY:
+{{gen 'story' max_tokens=2000}}
+
+TITLE: {{gen 'title'}}
 `;
 
-export const CHARACTER_BIOS = `{{#system~}}
-Your task is to read a story, and extract a list of characters from it. Some of these characters are known to us, so we will provide a short description of the character.
+export const CHARACTER_BIOS = `Your task is to read a story, and extract a list of characters from it. Some of these characters are known to us, so we will provide a short description of the character.
 
 If a character is known, you should simply include the provided description. If the character was not provided, you should make up a short description/backstory (1 - 3 sentences). You can be imaginative as long as you don't contradict information from the story. Only include named characters.
 
-Return the character descriptions in an unordered list format, with each list item following the pattern * NAME: DESCRIPTION. Do not include anything else in your response.
-{{~/system}}
-{{#user~}}
-Known Characters:
+Return the character descriptions in an unordered list format, with each list item following the pattern NAME: DESCRIPTION. Do not include anything else in your response.
+
+KNOWN CHARACTERS:
 {{~#each characters}}
-* {{ this.name }}: {{ this.description}}
+{{ this.name }}: {{ this.description}}
 {{~/each}}
 
-Story:
+STORY:
 {{ story }}
-{{~/user}}
-{{#assistant~}}
-{{gen 'full_characters' }}
-{{~/assistant}}
+
+ALL CHARACTERS:
+{{#geneach 'full_characters' }}
+{{ gen 'this.name' stop=':' }}:{{ gen 'this.description' stop='\n'}}
+{{~/geneach}}
 `;
 
-export const CHARACTER_DESCRIPTORS = `{{#system~}}
-Your task is to generate character descriptors for a given backstory. These characters descriptors will be fed into an image generation pipeline, and we want the character descriptors to be specific so there is consistency between different images.
+export const CHARACTER_DESCRIPTORS = `Your task is to generate visual tags for a given character desciption. These characters tags will be fed into an AI image generator. Because this will be used to generate images, we just care about the characters visual appearance, not their personality or mindset.
 
-You should invent your own details, but the goal is to be very detailed with lots of specifics on the characters PHYSICAL features.
+You will be provided a list of characters, with a written description about the character. You should use this information to generate a set of visually descriptive tags. You should make up SPECIFIC visual details to make each character more unique. 
 
-You will be provided a list of characters with a brief description of them -- this can include their backstory, personality, and physical traits. You should use these to generate your DETAILED set of descriptors. Be concise, you don't need to return paragraph style descriptions, just a robust set of short descriptive tags.
+You should provide somewhere between 4-12 tags for each character, focusing ONLY on their physical description. Make sure the tags are specific and would identify a unique character. NEVER include proper nouns in the tags. NEVER include tags that describe anything other than the character's appearance.
 
-You should provide somewhere between 4-12 specific descriptors for each character which together would form a fairly specific visual of the character. Focus mostly on PHYSICAL characteristics and again feel free to add or invent detail.
+Tags should be comma separated in a single sentence and all lowercase.
 
-Return your response in the format: <CHARACTER_NAME>: <DESCRIPTIONS>, separating each character with a newline.
-{{~/system}}
-{{~#each full_characters}}
-{{#user~}}
-{{this.name}}: {{this.description}}
-{{~/user}}
-{{#assistant~}}
-{{gen 'descriptors' list_append=True}}
-{{~/assistant}}
+Example:
+
+NAME: Alfredo
+DECSCRIPTION: A charming and curious boy with curly hair. Eager for adventure and excitement
+TAGS: young boy, 6 years old, glistening blue eyes, curly brown hair, freckles
+
+Characters:
+
+{{#geneach 'enriched_characters' num_iterations=len(characters)}}
+{{ set 'this.name' characters[@index].name }}
+{{ set 'this.description' characters[@index].description }}
+NAME: {{characters[@index].name}}
+DESCRIPTION: {{characters[@index].description}}
+TAGS: {{gen 'this.tags' }}
+{{/geneach}}
+`;
+
+export const GENERATE_IMAGE_PROMPT = `Your task is to generate a prompt for an image generation AI given the following characters:
+
+CHARACTERS:
+
+{{#each characters}}
+{{ this.name }}: {{ this.tags }}
 {{~/each}}
-`;
 
-export const GENERATE_IMAGE_PROMPT = `
-{{#system~}}
-Your task is to generate a prompt for an image generation AI. 
+You will be given a list of characters and a short set of tags for each of then. We will then work through the story. For each paragraph, we want to try to generate an image prompt. If the paragraph doesn't reference events that can easily be made into an illustration, then simply return "SKIP". Otherwise, return a short and descriptive image prompt relevant to the paragraph content.
 
-You will also be given a list of characters and a paragraph from a children's story. If the paragraph doesn't reference events that can easily be captured in an illustration, then simply return "SKIP". An example of where it would be appropriate to skip is if the paragraph is mostly focused on the character's inner dialogue, or describes a scene which is very hard to visualize. Otherwise, return a short and descriptive image prompt relevant to the paragraph content.
+You should never refer to a character by name or include any proper nouns. Instead, use the provided character tags to _describe_ the character's appearance, focus especially on visually distinctive characteristics.
 
-Write the prompt as if it is a description of the scene, not a request to an AI. Make it**as concise as possible**, it should be a series of short descriptions, not a complete sentence or paragraph. It should be 2-3 lines at most.
+A good image prompt does not to be gramatically coherent or contain prepositions, just a short series of brief visual descriptions, comma separataed as needed but still returned in a single sentence. It should be VERY concise and it NEVER contains any proper nouns. 
 
-Your response should include the prompt and no other text at all. You should not attempt to continue the story in any way, just provide the image prompt.
+STORY:
 
-Include lots of descriptive language, and make sure to reference the details from the provided visual descriptions. Do not add details that are inconsistent with the provided descriptions. Do not use emotional language or language about the character's thoughts. Only use language that describes the visuals of the scene.
+{{#geneach 'enriched_paragraphs' num_iterations=len(paragraphs)}}
+{{ set 'this.content' paragraphs[@index]}}
+{{ paragraphs[@index] }}
+Image Prompt: {{gen 'this.prompt' max_tokens=200 stop='\n'}}
 
-Your response should NEVER under any circumstances contain proper nouns or a reference to the characters. Instead YOU MUST use the visual details provided in the character descriptions.
-{{~/system}}
-{{#user~}}
-Character Descriptors:
-{{~#each descriptors}}
-{{ this }}
-{{~/each}}
-Paragraph:
-{{ paragraph }}
-{{~/user}}
-{{#assistant~}}
-{{gen "image_prompts" max_tokens=200}}
-{{~/assistant}}
-`;
+{{/geneach}}`;

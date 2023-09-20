@@ -7,7 +7,7 @@ from pydantic import BaseModel
 
 load_dotenv()
 
-guidance.llm = guidance.llms.OpenAI("gpt-3.5-turbo")
+guidance.llm = guidance.llms.OpenAI("gpt-3.5-turbo-instruct")
 
 app = FastAPI()
 

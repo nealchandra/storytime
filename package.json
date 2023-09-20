@@ -9,7 +9,6 @@
     "type-check": "tsc"
   },
   "dependencies": {
-    "clsx": "^1.2.1",
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
     "@fontsource/merriweather": "^5.0.3",
@@ -20,6 +19,7 @@
     "@vercel/analytics": "^1.0.1",
     "@vercel/kv": "^0.2.2",
     "class-variance-authority": "^0.6.1",
+    "clsx": "^1.2.1",
     "encoding": "^0.1.13",
     "inngest": "^2.1.0",
     "lodash": "^4.17.21",
@@ -31,6 +31,7 @@
     "prettier": "^2.7.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "replicate": "^0.18.0",
     "swr": "^2.1.5",
     "tailwind-merge": "^1.13.2",
     "tailwindcss": "3.3.2",
@@ -39,12 +40,12 @@
     "zod": "^3.21.4"
   },
   "devDependencies": {
-    "concurrently": "^8.0.1",
     "@types/lodash": "^4.14.198",
     "@types/node": "^12.12.21",
     "@types/react": "^17.0.2",
     "@types/react-dom": "^17.0.1",
     "@types/uuid": "^9.0.3",
+    "concurrently": "^8.0.1",
     "eslint": "^8.26.0",
     "eslint-config-next": "13.4.10",
     "eslint-config-prettier": "^8.5.0",
