@@ -1,6 +1,5 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  proxyTimeout: 3 * 60 * 1000,
   rewrites: async () => {
     return [
       {

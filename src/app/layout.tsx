@@ -30,7 +30,6 @@ export default function RootLayout({
         className={cn(
           'min-h-screen bg-background font-sans antialiased',
           inter.variable
-          // fontHeading.variable
         )}
       >
         <header>
@@ -42,13 +41,13 @@ export default function RootLayout({
           {children}
           <Toaster />
         </Providers>
+        <footer>
+          <hr />
+          <span>
+            <Link href="mailto:feedback@storytime.place">Feedback</Link>
+          </span>
+        </footer>
       </body>
-      <footer>
-        <hr />
-        <span>
-          <Link href="mailto:feedback@storytime.place">Feedback</Link>
-        </span>
-      </footer>
     </html>
   );
 }
