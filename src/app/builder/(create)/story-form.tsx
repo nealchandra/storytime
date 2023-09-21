@@ -6,6 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useFieldArray, useForm } from 'react-hook-form';
 import * as z from 'zod';
 
+import { createStory } from '@/actions/stories';
 import { Icons } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import {
@@ -55,7 +56,10 @@ export const StoryForm: React.FC<{}> = ({}) => {
   return (
     <Form {...form}>
       <form
-        onSubmit={form.handleSubmit((r) => console.log(r))}
+        onSubmit={form.handleSubmit(async (d) => {
+          const x = await createStory(d);
+          console.log(x);
+        })}
         className="space-y-8"
       >
         {fields.map((field, index) => (
