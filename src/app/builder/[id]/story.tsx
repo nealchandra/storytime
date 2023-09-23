@@ -2,6 +2,8 @@
 
 import * as React from 'react';
 
+import Image from 'next/image';
+
 import { StoryPayload, getStory } from '@/actions/stories';
 import { Skeleton } from '@/components/ui/skeleton';
 
@@ -28,7 +30,7 @@ export const Story: React.FC<{ story: StoryPayload }> = ({ story }) => {
       }
     }, 500);
     return () => clearInterval(interval);
-  }, [isRunning]);
+  }, [isRunning, state.id]);
 
   if (isRunning) {
     return (
@@ -49,11 +51,15 @@ export const Story: React.FC<{ story: StoryPayload }> = ({ story }) => {
 
   return (
     <>
-      {state.paragraphs.map((p) => (
-        <div className="grid grid-cols-2">
+      {state.paragraphs.map((p, idx) => (
+        <div key={idx} className="grid grid-cols-2">
           <p className="text-3xl">{p.content}</p>
           {p.image && p.image.length > 0 ? (
-            <img className="rounded-lg" src={p.image[0]} />
+            <Image
+              alt={p.prompt || ''}
+              className="rounded-lg"
+              src={p.image[0]}
+            />
           ) : null}
         </div>
       ))}
