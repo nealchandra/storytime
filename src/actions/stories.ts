@@ -31,7 +31,7 @@ export type StoryPayload = {
   state: StorytimeState;
 };
 
-export const getStory = async (id: string) => {
+export const getStory = async (id: string): Promise<StoryPayload | null> => {
   const state: StorytimeState | null = await kv.hgetall(id);
 
   if (!state) {
