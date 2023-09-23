@@ -1,19 +1,22 @@
 'use server';
 
+import { kv } from '@vercel/kv';
 import { headers } from 'next/headers';
-import * as z from 'zod';
+import { redirect } from 'next/navigation';
+import { v4 as uuidv4 } from 'uuid';
 
 import { guidance, replicate } from '@/lib/story-generation/generation';
 import * as prompts from '@/lib/story-generation/prompts';
 import { Workflow } from '@/lib/workflow';
 
 type StorytimeState = {
+  id: string;
   story: string;
   title: string;
   subject: string;
   characters: { name: string; description: string; tags?: string }[];
   descriptors: string[];
-  paragraphs: { content: string; prompt?: string; image?: Object | null }[];
+  paragraphs: { content: string; prompt?: string; image?: string[] | null }[];
 };
 
 type Payload = {
@@ -21,8 +24,39 @@ type Payload = {
   subject: string;
 };
 
+export type StoryPayload = {
+  workflow: {
+    status: 'completed' | 'running';
+  };
+  state: StorytimeState;
+};
+
+export const getStory = async (id: string) => {
+  const state: StorytimeState | null = await kv.hgetall(id);
+
+  if (!state) {
+    return null;
+  }
+
+  // FIXME: maybe this should be in the actual state or formalized in some way.
+  const completed =
+    (state.paragraphs ?? []).filter((p) => !!p.image).length > 0;
+  return {
+    state,
+    workflow: {
+      status: completed ? 'completed' : 'running',
+    },
+  };
+};
+
 export const createStory = async (payload: Payload) => {
   const origin = headers().get('x-origin');
+  const id = uuidv4();
+
+  const save = (state: Partial<StorytimeState>) => {
+    kv.hset(id, state);
+  };
+
   const workflow = new Workflow<StorytimeState>(
     [
       async (s) => {
@@ -85,8 +119,15 @@ export const createStory = async (payload: Payload) => {
         return newState;
       },
     ],
-    { characters: payload.characters, subject: payload.subject }
+    { id, characters: payload.characters, subject: payload.subject },
+    save
   );
 
-  return await workflow.run();
+  // this will save the initial state
+  await workflow.init();
+
+  // kick off the workflow
+  workflow.run();
+
+  redirect(`/builder/${id}`);
 };
