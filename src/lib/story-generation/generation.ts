@@ -29,13 +29,13 @@ export const guidance = async (
   return resp.json();
 };
 
-export const replicate = async (prompt: string) => {
-  return await replicate_client.run(
+export const replicate = async (prompt: string): Promise<string[]> => {
+  return (await replicate_client.run(
     'stability-ai/sdxl:8beff3369e81422112d93b89ca01426147de542cd4684c244b673b105188fe5f',
     {
       input: {
         prompt: `${prompt}, children's book style, disney, cinematic`,
       },
     }
-  );
+  )) as string[];
 };
