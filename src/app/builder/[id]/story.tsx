@@ -55,11 +55,7 @@ export const Story: React.FC<{ story: StoryPayload }> = ({ story }) => {
         <div key={idx} className="grid grid-cols-2">
           <p className="text-3xl">{p.content}</p>
           {p.image && p.image.length > 0 ? (
-            <Image
-              alt={p.prompt || ''}
-              className="rounded-lg"
-              src={p.image[0]}
-            />
+            <img alt={p.prompt || ''} className="rounded-lg" src={p.image[0]} />
           ) : null}
         </div>
       ))}

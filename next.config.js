@@ -28,6 +28,14 @@ const nextConfig = {
       },
     ];
   },
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'pbxt.replicate.delivery',
+      },
+    ],
+  },
 };
 
 module.exports = nextConfig;
