@@ -2,57 +2,62 @@
 
 import * as React from 'react';
 
-import Image from 'next/image';
+import { range } from 'lodash';
 
 import { StoryPayload, getStory } from '@/actions/stories';
 import { Skeleton } from '@/components/ui/skeleton';
 
 export const Story: React.FC<{ story: StoryPayload }> = ({ story }) => {
-  const [storyState, setStoryState] = React.useState<StoryPayload['state']>(
+  const [state, setStoryState] = React.useState<StoryPayload['state']>(
     story.state
   );
   const [isRunning, setIsRunning] = React.useState<boolean>(
     story.workflow.status !== 'completed'
   );
-  const { state } = story;
 
   React.useEffect(() => {
     if (!isRunning) {
       return;
     }
 
-    const interval = setInterval(async () => {
-      const story = await getStory(state.id);
-      setStoryState(story!.state);
+    console.log('effect is running');
 
-      if (story!.workflow.status == 'completed') {
+    const interval = setInterval(async () => {
+      const curr = await getStory(story.state.id);
+      setStoryState(curr!.state);
+
+      if (curr!.workflow.status == 'completed') {
         setIsRunning(false);
       }
     }, 500);
-    return () => clearInterval(interval);
-  }, [isRunning, state.id]);
+
+    return () => {
+      clearInterval(interval);
+    };
+  }, [isRunning, story.state.id]);
 
   if (isRunning) {
     return (
       <div className="space-y-4">
-        <Skeleton className="h-4 w-[500px]" />
-        <Skeleton className="h-4 w-[400px]" />
-        <Skeleton className="h-4 w-[500px]" />
-        <Skeleton className="h-4 w-[400px]" />
-        <Skeleton className="h-4 w-[500px]" />
-        <Skeleton className="h-4 w-[400px]" />
-        <Skeleton className="h-4 w-[500px]" />
-        <Skeleton className="h-4 w-[400px]" />
+        {range(5).map((_) => (
+          <>
+            <Skeleton className="h-4 w-[100%]" />
+            <Skeleton className="h-4 w-[95%]" />
+          </>
+        ))}
       </div>
     );
   }
 
-  console.log(story);
+  console.log(state);
 
   return (
     <>
-      {state.paragraphs.map((p, idx) => (
-        <div key={idx} className="grid grid-cols-2">
+      <h1 className="text-3xl font-bold leading-tight tracking-tighter md:text-5xl lg:leading-[1.1]">
+        {state.title}
+      </h1>
+      {(state.paragraphs ?? []).map((p, idx) => (
+        <div key={idx} className="grid grid-cols-2 gap-10 my-10">
           <p className="text-3xl">{p.content}</p>
           {p.image && p.image.length > 0 ? (
             <img alt={p.prompt || ''} className="rounded-lg" src={p.image[0]} />

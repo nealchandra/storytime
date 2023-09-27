@@ -1,4 +1,4 @@
-type WorkflowStep<T extends Object> = (
+export type WorkflowStep<T extends Object> = (
   state: Partial<T>
 ) => Promise<Partial<T>> | Partial<T>;
 

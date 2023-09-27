@@ -1,31 +1,32 @@
-import { EventSchemas, Inngest } from 'inngest';
+import { inngest } from '.';
+import { kv } from '@vercel/kv';
 import { serve } from 'inngest/next';
 
-import { StorytimeService } from '@/app/api/stories/route';
+import {
+  StorytimeState,
+  StorytimeSteps,
+} from '@/lib/generation/storytime-workflow';
+import { Workflow } from '@/lib/workflow';
 
-type CreateStory = {
-  data: {
-    storyId: string;
-    characters: string[];
-    subjects: string[];
-  };
-};
-type Events = {
-  'stories.create': CreateStory;
-};
-
-const inngest = new Inngest({
-  name: 'Storytime',
-  schemas: new EventSchemas().fromRecord<Events>(),
-});
-
-const createStoryHandler = inngest.createFunction(
-  { name: 'Create Story' },
-  { event: 'stories.create' },
+const workflowHandler = inngest.createFunction(
+  { name: 'Run Workflow' },
+  { event: 'workflow.start' },
   async ({ event }) => {
-    const s = new StorytimeService();
-    return s.createStory(event.data);
+    const state: Partial<StorytimeState> | null = await kv.hgetall(
+      event.data.id
+    );
+
+    if (!state) {
+      throw Error('Invalid id');
+    }
+
+    const save = (state: Partial<StorytimeState>) => {
+      kv.hset(event.data.id, state);
+    };
+
+    const workflow = new Workflow<StorytimeState>(StorytimeSteps, state, save);
+    await workflow.run();
   }
 );
 
-export const { GET, POST, PUT } = serve(inngest, [createStoryHandler]);
+export const { GET, POST, PUT } = serve(inngest, [workflowHandler]);
