@@ -20,8 +20,6 @@ export const Story: React.FC<{ story: StoryPayload }> = ({ story }) => {
       return;
     }
 
-    console.log('effect is running');
-
     const interval = setInterval(async () => {
       const curr = await getStory(story.state.id);
       setStoryState(curr!.state);
@@ -31,19 +29,17 @@ export const Story: React.FC<{ story: StoryPayload }> = ({ story }) => {
       }
     }, 500);
 
-    return () => {
-      clearInterval(interval);
-    };
+    return () => clearInterval(interval);
   }, [isRunning, story.state.id]);
 
   if (isRunning) {
     return (
       <div className="space-y-4">
-        {range(5).map((_) => (
-          <>
+        {range(5).map((idx) => (
+          <React.Fragment key={idx}>
             <Skeleton className="h-4 w-[100%]" />
             <Skeleton className="h-4 w-[95%]" />
-          </>
+          </React.Fragment>
         ))}
       </div>
     );
