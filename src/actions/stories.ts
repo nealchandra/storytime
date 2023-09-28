@@ -48,7 +48,7 @@ export const createStory = async (payload: Payload) => {
   });
 
   await inngest.send({
-    name: 'workflow.start',
+    name: 'workflow.run',
     data: {
       id,
     },

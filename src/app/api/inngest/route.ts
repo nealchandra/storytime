@@ -10,22 +10,22 @@ import { Workflow } from '@/lib/workflow';
 
 const workflowHandler = inngest.createFunction(
   { name: 'Run Workflow' },
-  { event: 'workflow.start' },
-  async ({ event }) => {
-    const state: Partial<StorytimeState> | null = await kv.hgetall(
-      event.data.id
-    );
+  { event: 'workflow.run' },
+  async ({ event, step }) => {
+    for (let workflowStep of StorytimeSteps) {
+      await step.run('Run workflow step', async () => {
+        let state: Partial<StorytimeState> | null = await kv.hgetall(
+          event.data.id
+        );
 
-    if (!state) {
-      throw Error('Invalid id');
+        if (!state) {
+          throw Error('Invalid id');
+        }
+
+        state = await workflowStep(state);
+        await kv.hset(event.data.id, state);
+      });
     }
-
-    const save = (state: Partial<StorytimeState>) => {
-      kv.hset(event.data.id, state);
-    };
-
-    const workflow = new Workflow<StorytimeState>(StorytimeSteps, state, save);
-    await workflow.run();
   }
 );
 

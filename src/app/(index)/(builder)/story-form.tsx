@@ -57,8 +57,8 @@ export const StoryForm: React.FC<{}> = ({}) => {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(async (d) => {
-          const x = await createStory(d);
-          console.log(x);
+          setLoading(true);
+          await createStory(d);
         })}
         className="space-y-8"
       >
@@ -152,17 +152,19 @@ export const StoryForm: React.FC<{}> = ({}) => {
             />
           </CardContent>
         </Card>
-        <Button
-          className="mr-2"
-          variant="outline"
-          onClick={() => append({ name: '', description: '' })}
-        >
-          Add character
-        </Button>
-        <Button type="submit">
-          {loading && <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />}
-          Submit
-        </Button>
+        <div className="flex flex-start align-center">
+          <Button
+            className="mr-2"
+            variant="outline"
+            onClick={() => append({ name: '', description: '' })}
+          >
+            Add character
+          </Button>
+          <Button type="submit" disabled={loading}>
+            {loading && <Icons.spinner className="mr-4 h-4 w-4 animate-spin" />}
+            Submit
+          </Button>
+        </div>
       </form>
     </Form>
   );

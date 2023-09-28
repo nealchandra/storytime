@@ -1,7 +1,7 @@
 import { EventSchemas, Inngest } from 'inngest';
 
 type Events = {
-  'workflow.start': {
+  'workflow.run': {
     data: {
       id: string;
     };
