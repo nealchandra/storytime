@@ -1,4 +1,4 @@
-import { Inter } from 'next/font/google';
+import { Inter, Patrick_Hand } from 'next/font/google';
 import Link from 'next/link';
 
 import { Toaster } from '@/components/ui/toaster';
@@ -11,6 +11,12 @@ import './globals.css';
 const inter = Inter({
   subsets: ['latin'],
   variable: '--font-inter',
+});
+
+const patrick = Patrick_Hand({
+  subsets: ['latin'],
+  variable: '--font-patrick-hand',
+  weight: '400',
 });
 
 export const metadata = {
@@ -28,8 +34,9 @@ export default function RootLayout({
       <head />
       <body
         className={cn(
-          'min-h-screen bg-background font-sans antialiased',
-          inter.variable
+          'min-h-screen bg-background font-inter antialiased',
+          inter.variable,
+          patrick.variable
         )}
       >
         <header>

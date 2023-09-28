@@ -11,6 +11,10 @@ module.exports = {
       },
     },
     extend: {
+      fontFamily: {
+        patrick: ['var(--font-patrick-hand)'],
+        inter: ['var(--font-inter)'],
+      },
       colors: {
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',

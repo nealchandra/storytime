@@ -6,6 +6,7 @@ import { range } from 'lodash';
 
 import { StoryPayload, getStory } from '@/actions/stories';
 import { Skeleton } from '@/components/ui/skeleton';
+import { cn } from '@/lib/utils';
 
 export const Story: React.FC<{ story: StoryPayload }> = ({ story }) => {
   const [state, setStoryState] = React.useState<StoryPayload['state']>(
@@ -49,12 +50,19 @@ export const Story: React.FC<{ story: StoryPayload }> = ({ story }) => {
 
   return (
     <>
-      <h1 className="text-3xl font-bold leading-tight tracking-tighter md:text-5xl lg:leading-[1.1]">
+      <h1 className="text-3xl font-medium font-inter leading-tight tracking-tighter md:text-5xl lg:leading-[1.1]">
         {state.title}
       </h1>
       {(state.paragraphs ?? []).map((p, idx) => (
-        <div key={idx} className="grid grid-cols-2 gap-10 my-10">
-          <p className="text-3xl">{p.content}</p>
+        <div key={idx} className="grid grid-cols-1 md:grid-cols-2 gap-10 my-10">
+          <p
+            className={cn(
+              'text-3xl order-last font-patrick tracking-wide m-auto',
+              idx % 2 !== 0 && 'md:order-first'
+            )}
+          >
+            {p.content}
+          </p>
           {p.image && p.image.length > 0 ? (
             <img alt={p.prompt || ''} className="rounded-lg" src={p.image[0]} />
           ) : null}

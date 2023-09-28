@@ -24,7 +24,7 @@ export default async function StoryPage({
   return (
     <Shell>
       <h1 className="text-3xl font-bold leading-tight tracking-tighter md:text-5xl lg:leading-[1.1]"></h1>
-      <div className="hidden h-full flex-col md:flex">
+      <div className="h-full flex-col md:flex">
         <div className="grid gap-12">
           <Story story={story} />
         </div>
